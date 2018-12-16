@@ -1,0 +1,25 @@
+{
+  "name": "html-tests",
+  "version": "1.0.0",
+  "description": "A playground for testing",
+  "author": "RaduW",
+  "license": "MIT",
+  "private": true,
+  "devDependencies": {
+    "clean-webpack-plugin": "^1.0.0",
+    "copy-webpack-plugin": "^4.6.0",
+    "css-loader": "^1.0.1",
+    "style-loader": "^0.23.1",
+    "ts-loader": "^5.3.0",
+    "tslint": "^5.11.0",
+    "typescript": "^3.1.6",
+    "webpack": "^4.26.1",
+    "webpack-cli": "^3.1.2",
+    "webpack-dev-server": "^3.1.10"
+  },
+  "scripts": {
+    "build": "webpack --config webpack.config.js",
+    "watch": "webpack --watch --config webpack.config.js",
+    "start": "webpack-dev-server --open "
+  }
+}

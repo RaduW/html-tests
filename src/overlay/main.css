@@ -1,0 +1,77 @@
+.visible {
+    display: block;
+}
+
+.hidden {
+    display: none;
+}
+.clay-bckgr{
+    display:none;
+    z-index: 1000;
+    opacity: 0.2;
+}
+
+.clay-bckgr.open {
+    display:block;
+    position:fixed;
+    top:0;
+    bottom:0;
+    left:0;
+    right:0;
+    background-color: #888;
+}
+
+.clay {
+    width: 100%;
+    border: 10px solid #ddd;
+    background-color: #fff;
+    overflow: hidden;
+    max-height: 0;
+    opacity: 0;
+    /*transition: all .4s ease-in-out;*/
+    position: fixed;
+    overflow-y: auto;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -400px;
+    max-width: 800px;
+    /*-moz-transition: all .4s ease-in-out;*/
+    /*-webkit-transition: all .4s ease-in-out;*/
+    /*-o-transition: all .4s ease-in-out;*/
+    z-index: 1001;
+    display:none;
+}
+
+.clay.open {
+    display:block;
+    opacity: 1;
+    /*transition: all 0.5s ease-in-out;*/
+    max-height: 70%; /* something big enough */
+}
+
+.cnt {
+    flex-direction: row;
+    display: flex;
+    position: absolute;
+    left:0;
+    right:0;
+    top:0;
+    bottom:0;
+    z-index: 1001;
+    align-items: center;
+}
+
+.overlay {
+    flex: 0 0 1;
+    background-color: lightgoldenrodyellow;
+    width: 800px;
+    max-height: 100%;
+    overflow-y: auto;
+    border: 8px solid white;
+    box-sizing: border-box;
+}
+
+.spacer {
+    flex: 1 1 0;
+}
