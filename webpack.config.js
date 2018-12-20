@@ -5,20 +5,23 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 module.exports = {
   mode: 'development',
   entry: {
-    overlay: './src/overlay/main.ts'
+    overlay: './src/overlay/main.ts',
+    'virtual-scroll': './src/virtual-scroll/main.ts'
   },
   output: {
     filename: '[name].js',
     path: path.resolve(__dirname, 'dist')
   },
   plugins: [
-    new CopyWebpackPlugin([{from: 'src/overlay/index.html', to: 'overlay.html', toType: 'file'}]),
+    new CopyWebpackPlugin([{from: 'src/overlay/index.html', to:'overlay.html', toType: 'file'}]),
+    new CopyWebpackPlugin([{from: 'src/virtual-scroll/index.html', to:'virtual-scroll.html', toType: 'file'}]),
+    new CopyWebpackPlugin([{from: 'src/index.html', to:'index.html', toType: 'file'}]),
     new CleanWebpackPlugin(['dist']), // cleanup the dist directory before build
   ],
   devtool: "inline-source-maps",
   devServer: {
-    contentBase: './dist',
-    openPage: 'overlay.html'
+    contentBase: '.',
+    openPage: 'index.html'
   },
   module: {
     rules: [
