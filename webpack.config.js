@@ -10,13 +10,13 @@ module.exports = {
   },
   output: {
     filename: '[name].js',
-    path: path.resolve(__dirname, 'dist')
+    path: path.resolve(__dirname, 'docs')
   },
   plugins: [
     new CopyWebpackPlugin([{from: 'src/overlay/index.html', to:'overlay.html', toType: 'file'}]),
     new CopyWebpackPlugin([{from: 'src/virtual-scroll/index.html', to:'virtual-scroll.html', toType: 'file'}]),
     new CopyWebpackPlugin([{from: 'src/index.html', to:'index.html', toType: 'file'}]),
-    new CleanWebpackPlugin(['dist']), // cleanup the dist directory before build
+    new CleanWebpackPlugin(['docs']), // cleanup the dist directory before build
   ],
   devtool: "inline-source-maps",
   devServer: {
@@ -28,7 +28,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         use: 'ts-loader',
-        exclude: [/node_modules/, /dist/]
+        exclude: [/node_modules/, /docs/]
       },
       {
         test: /\.css$/,
