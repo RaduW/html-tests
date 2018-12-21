@@ -21,5 +21,10 @@
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js",
     "start": "webpack-dev-server --open "
+  },
+  "dependencies": {
+    "moment": "^2.23.0",
+    "query-string": "^6.2.0",
+    "ramda": "^0.26.1"
   }
 }

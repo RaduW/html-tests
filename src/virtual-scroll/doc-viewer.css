@@ -1,0 +1,158 @@
+/*
+    Name: document-viewer.css
+    Date: 30 Jul 2018
+    Author: raduw
+    Description: styles for the document viewer
+*/
+
+.doc-viewer-shell{
+    height:100%;
+    margin:0;
+    background-color: cornsilk;
+}
+
+.doc-viewer-statusbar{
+    background-color: white;
+
+}
+
+.doc-viewer-toolbar{
+    background-color: white;
+}
+
+.doc-viewer{
+    padding: 1em;
+    max-width: 60em;
+    background: #fffae6;
+}
+.ti-{
+  text-align: justify;
+}
+
+
+.side-panel {
+    background: #fafafa;
+}
+.doc .no- .no- {
+    border-left: #fff5cc solid thin;
+    padding-left: 0.5em;
+}
+.no- {
+    margin-bottom: 0.4em;
+    text-align: justify;
+}
+
+.cap.cap.cap, .tit.tit.tit {
+    font-weight: 400;
+    font-size: large;
+    display: block;
+    text-align: center;
+}
+
+.cap > .no-, .tit > .no-{
+    font-weight: normal;
+    text-align: justify;
+    font-size: medium;
+    margin: 1em 0;
+}
+
+.na- {
+    font-weight: 700;
+    color: darkblue;
+}
+
+.not {
+}
+
+.sti {
+}
+
+.cap {
+}
+
+.sca {
+}
+
+.sec {
+}
+
+.sse {
+}
+
+.lis {
+}
+
+.car {
+}
+
+.ane {
+}
+
+.prt {
+}
+
+.spr {
+}
+
+.art {
+}
+
+.sar {
+}
+
+.ali {
+}
+
+.lit {
+}
+
+.pun {
+}
+
+.spu {
+}
+
+.par {
+}
+
+.qot {
+}
+
+.ori {
+}
+
+.del
+{
+    text-decoration-color: red;
+    text-decoration: line-through;
+}
+
+.show-deleted-off .del {
+    display: none;
+}
+
+.lg- span {
+    display: inline-block;
+}
+
+.lg- {
+    background: #dce7f5;
+    border: solid #93bdf5 1px;
+    padding: 0.2em 0.4em;
+}
+.show-legos-off .lg- {
+    display: none;
+}
+
+
+
+/*
+.nwc:before  {
+    color: #007373;
+    content: "(New) ";
+}
+*/
+
+.selected {
+    background: #ffeb99;
+}
