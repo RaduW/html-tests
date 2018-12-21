@@ -16,6 +16,7 @@ module.exports = {
     new CopyWebpackPlugin([{from: 'src/overlay/index.html', to:'overlay.html', toType: 'file'}]),
     new CopyWebpackPlugin([{from: 'src/virtual-scroll/index.html', to:'virtual-scroll.html', toType: 'file'}]),
     new CopyWebpackPlugin([{from: 'src/index.html', to:'index.html', toType: 'file'}]),
+    new CopyWebpackPlugin([{from: 'data', to:'data', toType: 'dir'}]),
     new CleanWebpackPlugin(['docs']), // cleanup the dist directory before build
   ],
   devtool: "inline-source-maps",
