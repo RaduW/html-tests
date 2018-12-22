@@ -6,7 +6,7 @@ import { toHierarchicalDocument } from './front/shadow-tree-builder';
 import { ShadowTree, toDom } from './front/shadow-tree';
 
 export function main(){
-    const shadowTreeP = getShadowTree('')
+    const shadowTreeP = getShadowTree('2015-11-04')
     shadowTreeP.then( mountDoc)
 }
 

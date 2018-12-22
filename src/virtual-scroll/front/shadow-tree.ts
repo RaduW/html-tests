@@ -61,8 +61,9 @@ export function toDom(root: ShadowTree | null | undefined) {
 
   root.element.className = getClasses(root)
 
-  if (!root.children)
+  if (!root.children || root.children.length === 0){
     return
+  }
 
   if (root.children.length == 0) {
     removeNodeChildren(root.element)
