@@ -13,49 +13,52 @@ export function wireToStructTree( structTree:object|null|undefined) : StructTree
     if (! structTree)
         return undefined
     
-    const modified: StructTree = <StructTree> R.evolve({
-        type : wireToNodeType,
-        id: wireToId,
-        attributes: wireToAttributes,
-        children: R.map(st => st['children']? wireToStructTree(st['children']) : [])
-    }, structTree)
+    const modified: StructTree = <StructTree>{
+        type : wireToNodeType(structTree['tag']),
+        id: wireToId(structTree),
+        attributes: wireToAttributes(structTree['attrs']),
+        children: structTree['children']? R.map(st => wireToStructTree(st), structTree['children']):[]
+    }
 
     return R.omit(['attrs','tag'],modified)
 }
-
-function wireToAttributes(structTree: object|null|undefined): StructTreeAttributes {
-    if ( ! structTree){
-        return {}
-    }
-    const attrs = R.evolve({
-        lifeHistory: wireAttributesToLifeHistory,
-        nodeType: wireAttributesToLegaDocNodeType,
-        
-    }, structTree['attrs'])
-
-    return R.omit(['id', 'lifeHist'], attrs)
+function bubuFunc(obj: any){
+    return "the bubu"
 }
 
-function wireAttributesToLifeHistory( attrs: object|null|undefined): LifeHistory | undefined{
-    if ( ! attrs || ! attrs['lifeHist']) {
-        return undefined
+function wireToAttributes(attrs: object|null|undefined): StructTreeAttributes {
+    if ( ! attrs){
+        return {}
     }
     
-    switch( attrs['lifeHist']){
+    const retVal :StructTreeAttributes= {
+        lifeHistory: wireToLifeHistory(attrs['lifeHist']),
+    }
+
+    if ( attrs['type']){
+        retVal.nodeType = wireToLegalDocNodeType(attrs['type'])
+    }
+
+    if ( attrs['legalId']){
+        retVal.legalId = attrs['legalId']
+    }
+
+    if ( attrs['lejIds']){
+        retVal.lejIds = attrs['lejIds']
+    }
+
+    return retVal
+}
+
+function wireToLifeHistory( lifeHistStr: string|null|undefined): LifeHistory | undefined{
+    switch( lifeHistStr){
         case "NewContent":
             return LifeHistory.NewContent
         case "Deleted":
             return LifeHistory.Deleted
+        default:
+            return LifeHistory.Original
     }
-    return undefined
-}
-
-function wireAttributesToLegaDocNodeType( attrs: object|null|undefined): LegalDocNodeType | undefined{
-    if ( ! attrs || ! attrs['type']) {
-        return undefined
-    }
-
-    return wireToLegalDocNodeType(attrs['type'])
 }
 
 function wireToId( structTree: object): string{

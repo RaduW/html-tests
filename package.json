@@ -21,7 +21,7 @@
   "scripts": {
     "build": "webpack --config webpack.config.js",
     "watch": "webpack --watch --config webpack.config.js",
-    "start": "webpack-dev-server --open "
+    "start": "webpack-dev-server "
   },
   "dependencies": {
     "moment": "^2.23.0",

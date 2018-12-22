@@ -1,0 +1,22 @@
+{
+    "tag": "Node",
+    "attrs": {
+        "type": "paragraf",
+        "id": "1588694"
+    },
+    "children": [
+        {
+            "tag": "Name",
+            "attrs": {
+                "legalId": "par-",
+                "id": "1588695"
+            }
+        },
+        {
+            "tag": "Title",
+            "attrs": {
+                "id": "1588696"
+            }
+        }
+    ]
+},

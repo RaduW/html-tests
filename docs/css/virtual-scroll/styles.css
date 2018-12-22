@@ -1,0 +1,137 @@
+/*
+@import 'components.css';
+@import 'from-bootstrap.css';
+@import 'markers.css';
+*/
+html, body {
+    height: 100%;
+    margin: 0;
+}
+
+body.sofor-front {
+    font-size: 1em;
+}
+
+.link {
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.logo {
+    padding-top: 10pt;
+    font-family: sans-serif;
+    font-size: 32pt;
+    margin-bottom: 20pt;
+}
+
+.summary-marker {
+    font-size: 24px;
+    color: #484677;
+    margin-left: 40px;
+}
+
+.summary-marker-date {
+    font-size: 24px;
+}
+
+.summary-marker-publication {
+    font-size: 18px;
+}
+
+.width100.ui-autocomplete, .width100 {
+    width: 100%;
+}
+
+.width100 ul {
+    width: 100%;
+}
+
+.ui-fluid .ui-autocomplete, .ui-fluid .ui-autocomplete-input {
+    width: 100%;
+}
+
+a.doc-link {
+    color: #0275d8;
+    margin-right: 8px;
+}
+
+
+.number-of-docs {
+    font-size: larger;
+    margin-bottom: 20pt;
+}
+
+.vertical-center-modal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/****
+  General layout
+****/
+
+.hidden {
+    visibility: hidden;
+}
+
+.width100 {
+    width: 100%;
+}
+
+.height100 {
+    height: 100%;
+}
+
+.display-inline-block {
+    display: inline-block;
+}
+.display-block {
+    display: block;
+}
+.display-inline{
+    display: inline;
+}
+.display-none{
+    display:none;
+}
+
+
+.bold {
+    font-weight: bold;
+}
+
+.bolder {
+    font-weight: bolder;
+}
+
+.clickable {
+    cursor: pointer;
+}
+
+.flex-row-container {
+    display: flex;
+    flex-direction: row;
+}
+
+.flex-column-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.flex-fixed {
+    flex: 0 0 1;
+}
+
+.flex-grow {
+    flex: 1 1 0;
+}
+
+.scroll {
+    overflow: auto;
+}
+
+.test {
+    background-color: darksalmon;
+}
+
