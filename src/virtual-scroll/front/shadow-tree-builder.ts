@@ -96,7 +96,6 @@ export function toHierarchicalDocument(elements: FragmentDictionary, structure: 
     return null
 
   const node = elements.getOrCreate(structure.id)
-  console.log('toHierarchicalDocument', node)
   if (!node)
     return null
 
