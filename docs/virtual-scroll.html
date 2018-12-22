@@ -3,8 +3,23 @@
             <link rel="stylesheet" href="./css/virtual-scroll/styles.css">
             <link rel="stylesheet" href="./css/virtual-scroll/doc-viewer.css">
     </head>
-    <body>
-        <h1>virtual scroll 2</h1>
+    <body class='sofor-front'>
+        <div id="root" class="height100 width100">
+            <div class="doc-viewer-shell flex-column-container">
+                <div class="flex-grow scroll flex-row-container">
+                    <div class="flex-grow"></div>
+                    <div>
+                        <div class="doc-viewer flex-fixed show-deleted-on show-legos on">
+                            <div class="doc-viewer shadow-tree-root">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex-grow"></div>
+                </div>
+            </div>
+        </div>
+        
+        
 
         <script type="text/javascript" src="virtual-scroll.js"></script>
     </body>
