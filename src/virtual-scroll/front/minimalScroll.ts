@@ -9,7 +9,7 @@
 
 
 
-import {logWarn} from '../util/logging'
+import {logWarn} from './logging'
 
 export function scrollToTop(elm?:HTMLElement|null, parent?:HTMLElement|null) {
 

@@ -4,6 +4,7 @@ import { StructTree } from './front/struct-tree';
 import { FragmentDictionary, toFragmentDictionary } from './front/fragment-dictionary';
 import { toHierarchicalDocument } from './front/shadow-tree-builder';
 import { ShadowTree, toDom, addVirtualElements } from './front/shadow-tree';
+import { createScrollHandler } from './virtual-dom';
 
 export function main(){
     const shadowTreeP = getShadowTree('')
@@ -31,6 +32,14 @@ function mountDoc( docTree: ShadowTree | null){
         const root = rootElms[0]
         toDom(docTree, true)
         root.appendChild(docTree.element)
+    }
+
+    const scrollParent = document.getElementsByClassName('scroll-container')
+    if ( scrollParent && scrollParent.length > 0 ){
+        const scrollHandler = createScrollHandler()
+        scrollParent[0].addEventListener('scroll', function(e) {
+            scrollHandler(docTree, <HTMLElement>scrollParent[0])
+          });
     }
 }
 
