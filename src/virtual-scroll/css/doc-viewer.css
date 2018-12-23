@@ -156,3 +156,11 @@
 .selected {
     background: #ffeb99;
 }
+
+.v-art {
+    height: 60em;
+    width: 59em;
+}
+
+.v-host {
+}

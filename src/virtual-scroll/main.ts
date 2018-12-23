@@ -3,10 +3,11 @@ import { wireToStructTree } from './front/wire-to-struct-tree';
 import { StructTree } from './front/struct-tree';
 import { FragmentDictionary, toFragmentDictionary } from './front/fragment-dictionary';
 import { toHierarchicalDocument } from './front/shadow-tree-builder';
-import { ShadowTree, toDom } from './front/shadow-tree';
+import { ShadowTree, toDom, addVirtualElements } from './front/shadow-tree';
 
 export function main(){
-    const shadowTreeP = getShadowTree('2015-11-04')
+    const shadowTreeP = getShadowTree('')
+    //const shadowTreeP = getShadowTree('2015-11-04')
     shadowTreeP.then( mountDoc)
 }
 
@@ -28,7 +29,7 @@ function mountDoc( docTree: ShadowTree | null){
 
     if ( rootElms && rootElms.length > 0){
         const root = rootElms[0]
-        toDom(docTree)
+        toDom(docTree, true)
         root.appendChild(docTree.element)
     }
 }
@@ -47,9 +48,12 @@ function getShadowTree( dateStr: string):Promise<ShadowTree|null>{
     const fragmentDictP: Promise<FragmentDictionary|null|undefined> = api.getText(contentFileName).then(toFragmentDictionary)
 
     return Promise.all([structP, fragmentDictP]).then(([structTree, fragmentDict]) => {
-        if ( !structTree || !fragmentDict)
+        if ( !structTree || !fragmentDict){
             return null
-        return toHierarchicalDocument(fragmentDict, structTree)
+        }
+        const retVal = toHierarchicalDocument(fragmentDict, structTree)
+        addVirtualElements(retVal)
+        return retVal
     })
 }
 main()

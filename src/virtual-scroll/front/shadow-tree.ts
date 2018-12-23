@@ -18,10 +18,7 @@ import {NodeIdPath} from './data-model'
 import {MarkersClsName} from './fragment-dictionary'
 
 //TODO move interfaces and other type defs to model
-
 export enum ElementType { Undefined = '??-', Leaf = 'li-', Node = 'no-', Name = 'na-', Title = 'ti-', Lego='lg-'}
-
-
 
 export interface ShadowTreeAttributes extends StructTreeAttributes {
   elmType?: ElementType
@@ -29,7 +26,10 @@ export interface ShadowTreeAttributes extends StructTreeAttributes {
 }
 
 export interface ShadowTree {
+  // the real element
   readonly element: HTMLElement
+  // an element to insert in the DOM instead of the real element (in order to speed up the display)
+  vElement?: HTMLElement  
   readonly id: string
   children?: ShadowTree[]
   readonly attributes: ShadowTreeAttributes
@@ -47,7 +47,7 @@ export type ShadowTreePtrPredicate = (ptr: ShadowTreePtr | null) => boolean
  * A shadow tree specifies how existing elements should be positioned in the dom.
  * The function transforms the dom to match the shadow tree.
  */
-export function toDom(root: ShadowTree | null | undefined) {
+export function toDom(root: ShadowTree | null | undefined, useVirtualDom: boolean = false) {
 
   if (!root)
     return
@@ -93,25 +93,26 @@ export function toDom(root: ShadowTree | null | undefined) {
       const currentChild = children[childCursor]
       if (!domElementCursor) {
         // we are at the end of the dom children append to root what is left from the shadow tree
-        toDom(currentChild)
-        root.element.appendChild(currentChild!.element)
+        toDom(currentChild, useVirtualDom)
+        const childElm = getElement(currentChild,useVirtualDom)
+        root.element.appendChild(childElm)
         childCursor++
       }
       else {
         // we have both domCursor and childCursor pointing at valid elements
-        if (domElementCursor === currentChild.element) {
+        if (sameElement(currentChild, domElementCursor)) {
           // we have a match advance both the dom cursor and the child cursor
-          toDom(currentChild)
+          toDom(currentChild, useVirtualDom)
           domCursor = domElementCursor.nextSibling
           childCursor++
         }
         else if (elementInChildren(domElementCursor, children, childCursor)) {
           //our current element has a few other children that should come in front of it
           //place all the children up to and excluding itself in front
-          while (childCursor < children.length && domElementCursor !== children[childCursor].element) {
+          while (childCursor < children.length && !sameElement(children[childCursor], domElementCursor)) {
             // append the children in front of the current element
-            toDom(children[childCursor])
-            root.element.insertBefore(children[childCursor].element, domElementCursor)
+            toDom(children[childCursor], useVirtualDom)
+            root.element.insertBefore(getElement(children[childCursor],useVirtualDom), domElementCursor)
             childCursor++
           }
         }
@@ -259,4 +260,51 @@ export function pointerToNodeIdPath(ptr: ShadowTreePtr|null): NodeIdPath|null{
     return null
 
   return R.map(elm=> elm.id, ptr)
+}
+
+///////////////////////////////
+//////// Virtual DOM //////////
+///////////////////////////////
+
+const VirtualNodeType = LegalDocNodeType.Articol
+
+/**
+ * ShadowTree initialization function ( should be called only once after the creation of a ShadowTree) 
+ * 
+ * NOTE: This SHOULD be merged in the ShadowTree creation code once the Virtual DOM gets out of the prototyping phase
+ */
+export function addVirtualElements( root: ShadowTree | null): ShadowTree|null {
+    if (! root) {
+        return null
+    }
+
+    if ( root.attributes.elmType === ElementType.Node && root.attributes.nodeType === VirtualNodeType){
+        root.vElement = document.createElement('div')
+        root.vElement.className = 'v-art'
+        root.vElement.id = root.id
+        return root // stop here (we don't virtualize elements inside virtualized elements)
+    }
+
+    if ( root.children){
+        R.forEach( c => addVirtualElements(c), root.children)
+    }
+
+    return root
+}
+
+export function getElement( tree: ShadowTree, useVirtualDom: boolean): HTMLElement {
+  return useVirtualDom && tree.attributes.elmType === ElementType.Node && tree.attributes.nodeType === VirtualNodeType && tree.vElement ?
+    tree.vElement : tree.element
+}
+
+/**
+ * Compares if a dom element is represented by the shadow tree
+ * @param tree a shadowTree containing the element to be compared
+ * @param element a dom element that should be compared against the shadow tree
+ * 
+ * NOTE: this is a backward compatibility function, after the VirtualDOM goes out of prototype phase
+ * this function should be replaced with the check 'tree.id === element.id'
+ */
+export function sameElement(tree: ShadowTree, element:HTMLElement){
+  return  tree.element === element || tree.id === element.id
 }
