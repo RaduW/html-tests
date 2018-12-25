@@ -36,9 +36,9 @@ function mountDoc( docTree: ShadowTree | null){
 
     const scrollParent = document.getElementsByClassName('scroll-container')
     if ( scrollParent && scrollParent.length > 0 ){
-        const scrollHandler = createScrollHandler()
+        const scrollHandler = createScrollHandler(<HTMLElement>scrollParent[0])
         scrollParent[0].addEventListener('scroll', function(e) {
-            scrollHandler(docTree, <HTMLElement>scrollParent[0])
+            scrollHandler(docTree)
           });
     }
 }

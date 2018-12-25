@@ -8,17 +8,19 @@
 
 import { ShadowTree } from "./front/shadow-tree";
 
-export function createScrollHandler(){
-    var processing = false
+export function createScrollHandler(parent: HTMLElement){
+    let processing:boolean = false
+    let parentClientRect = parent.getBoundingClientRect()
 
-    return function ( root: ShadowTree, parent: HTMLElement) {
+    
+    return function ( root: ShadowTree) {
         if ( processing){
             return 
         }
         else {
             processing = true
             window.requestAnimationFrame( function(){
-                scrollHandler(root, parent)
+                scrollHandler(root, parent, parentClientRect)
                 processing = false
     
             })
@@ -26,6 +28,7 @@ export function createScrollHandler(){
     }
 }
 
-function scrollHandler( root: ShadowTree, parent:HTMLElement ){
-    console.log('onScroll...')
+function scrollHandler( root: ShadowTree, parent:HTMLElement, parentClientRect: ClientRect ){
+    console.log('onScroll...', parentClientRect)
 }
+
