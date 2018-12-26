@@ -44,6 +44,7 @@ function toFlatDocumentInternal(elements: FragmentDictionary, structure: StructT
   const theNode: ShadowTree = {
     element: node,
     id: structure.id,
+    vElementActive: false,
     attributes: structure.attributes,
     children: []
   }
@@ -68,6 +69,7 @@ function toFlatDocumentInternal(elements: FragmentDictionary, structure: StructT
           const shadowTreeChild: ShadowTree = {
             element: domChild,
             id: child.id,
+            vElementActive: false,
             attributes: child.attributes
           }
           shadowTreeChild.attributes.elmType = structTreeToElementType(child)
@@ -104,7 +106,8 @@ export function toHierarchicalDocument(elements: FragmentDictionary, structure: 
     element: node,
     id: structure.id,
     attributes: structure.attributes,
-    children: structure.children ? [] : undefined
+    children: structure.children ? [] : undefined,
+    vElementActive: false
   }
   theNode.attributes.elmType = structTreeToElementType(structure)
 
@@ -125,6 +128,7 @@ export function toHierarchicalDocument(elements: FragmentDictionary, structure: 
         const lego: ShadowTree = {
           element: legoDom,
           id: lejId,
+          vElementActive: false,
           attributes: {
             elmType: ElementType.Lego
           }

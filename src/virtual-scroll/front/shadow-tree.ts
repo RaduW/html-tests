@@ -16,6 +16,7 @@ import {removeNodeChildren} from './html-util'
 import {LegalDocNodeType, LifeHistory, StructTreeAttributes} from './struct-tree'
 import {NodeIdPath} from './data-model'
 import {MarkersClsName} from './fragment-dictionary'
+import { toTree, getParent } from './shadow-tree-navigator';
 
 //TODO move interfaces and other type defs to model
 export enum ElementType { Undefined = '??-', Leaf = 'li-', Node = 'no-', Name = 'na-', Title = 'ti-', Lego='lg-'}
@@ -30,6 +31,8 @@ export interface ShadowTree {
   readonly element: HTMLElement
   // an element to insert in the DOM instead of the real element (in order to speed up the display)
   vElement?: HTMLElement  
+  // true if the vElement is active , false if element is active 
+  vElementActive : boolean
   readonly id: string
   children?: ShadowTree[]
   readonly attributes: ShadowTreeAttributes
@@ -94,7 +97,7 @@ export function toDom(root: ShadowTree | null | undefined, useVirtualDom: boolea
       if (!domElementCursor) {
         // we are at the end of the dom children append to root what is left from the shadow tree
         toDom(currentChild, useVirtualDom)
-        const childElm = getElement(currentChild,useVirtualDom)
+        const childElm = getSetElement(currentChild,useVirtualDom)
         root.element.appendChild(childElm)
         childCursor++
       }
@@ -112,7 +115,7 @@ export function toDom(root: ShadowTree | null | undefined, useVirtualDom: boolea
           while (childCursor < children.length && !sameElement(children[childCursor], domElementCursor)) {
             // append the children in front of the current element
             toDom(children[childCursor], useVirtualDom)
-            root.element.insertBefore(getElement(children[childCursor],useVirtualDom), domElementCursor)
+            root.element.insertBefore(getSetElement(children[childCursor],useVirtualDom), domElementCursor)
             childCursor++
           }
         }
@@ -268,6 +271,10 @@ export function pointerToNodeIdPath(ptr: ShadowTreePtr|null): NodeIdPath|null{
 
 const VirtualNodeType = LegalDocNodeType.Articol
 
+export function isVirtualNodeType ( root: ShadowTree | null): boolean {
+  return  !!root && root.attributes.elmType === ElementType.Node && root.attributes.nodeType === VirtualNodeType
+}
+
 /**
  * ShadowTree initialization function ( should be called only once after the creation of a ShadowTree) 
  * 
@@ -292,10 +299,54 @@ export function addVirtualElements( root: ShadowTree | null): ShadowTree|null {
     return root
 }
 
-export function getElement( tree: ShadowTree, useVirtualDom: boolean): HTMLElement {
-  return useVirtualDom && tree.attributes.elmType === ElementType.Node && tree.attributes.nodeType === VirtualNodeType && tree.vElement ?
-    tree.vElement : tree.element
+/**
+ * Gets the element to use ( either the real element or the virtual one) and remembers it 
+ * @param tree the tree
+ * @param useVirtualDom true if the operation should use virtual dom
+ */
+function getSetElement( tree: ShadowTree, useVirtualDom: boolean): HTMLElement {
+  tree.vElementActive = useVirtualDom && tree.attributes.elmType === ElementType.Node && tree.attributes.nodeType === VirtualNodeType && !!tree.vElement 
+  const retVal = tree.vElementActive ? tree.vElement : tree.element
+  return retVal!
 }
+
+/**
+ * Shows the real element (i.e not the virtual)
+ * @param treePtr the path the the shadow tree that should be shown
+ */
+export function showReal( treePtr: ShadowTreePtr|null): void {
+  switchVirtualElement(treePtr, false)
+}
+
+export function showVirtual(treePtr: ShadowTreePtr|null): void {
+  switchVirtualElement(treePtr, true)
+}
+
+function switchVirtualElement ( treePtr:ShadowTreePtr|null, virtual: boolean){
+  const tree = toTree(treePtr)
+  if ( ! tree){
+    return
+  }
+
+  if (!isVirtualNodeType(tree)){
+    return
+  }
+  const parentPtr = getParent(treePtr)
+  const parent = toTree(parentPtr)
+  if ( parent){
+    if ( tree.vElementActive && !virtual){
+      //show real
+        parent.element.replaceChild(tree.element, tree.vElement!)
+    }
+    else if( !tree.vElementActive && virtual){
+      //show virtual
+      parent.element.replaceChild(tree.vElement!, tree.element)
+    }
+  
+  }
+
+}
+
 
 /**
  * Compares if a dom element is represented by the shadow tree
