@@ -352,9 +352,7 @@ function switchVirtualElement ( treePtr:ShadowTreePtr|null, virtual: boolean){
       parent.element.replaceChild(tree.vElement!, tree.element)
       tree.vElementActive = true
     }
-  
   }
-
 }
 
 
