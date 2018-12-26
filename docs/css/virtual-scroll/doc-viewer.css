@@ -158,8 +158,9 @@
 }
 
 .v-art {
-    height: 60em;
-    width: 59em;
+    height: 30em;
+    /* width: 59em; */
+    margin: 0.5em;
     background-color: #ffaaaa;
 }
 

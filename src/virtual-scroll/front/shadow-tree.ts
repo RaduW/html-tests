@@ -334,13 +334,23 @@ function switchVirtualElement ( treePtr:ShadowTreePtr|null, virtual: boolean){
   const parentPtr = getParent(treePtr)
   const parent = toTree(parentPtr)
   if ( parent){
-    if ( tree.vElementActive && !virtual){
+    if ( tree.vElementActive && !virtual ){
       //show real
+      if(!tree.element || ! tree.vElement){
+        console.log( 'try to switch to real with missing virtual elm', tree)
+        return 
+      }
         parent.element.replaceChild(tree.element, tree.vElement!)
+        tree.vElementActive = false
     }
     else if( !tree.vElementActive && virtual){
       //show virtual
+      if(!tree.element || ! tree.vElement){
+        console.log( 'try to switch to virtual with missing virtual elm', tree)
+        return 
+      }
       parent.element.replaceChild(tree.vElement!, tree.element)
+      tree.vElementActive = true
     }
   
   }

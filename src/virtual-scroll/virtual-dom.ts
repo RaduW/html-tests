@@ -71,8 +71,10 @@ function findFirstVisibleVirtualElm(root: ShadowTreePtr|null, pRect:ClientRect):
 
     const actualElm = elm! //if it is visible it must be real
 
-    if (isVirtualNodeType(tree))
+    if (isVirtualNodeType(tree)){
+        console.log(root)
         return root
+    }
     
 
     if ( tree.children){
