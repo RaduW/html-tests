@@ -135,7 +135,7 @@ function realizeNode(context: VirtualDocContext, node: ShadowTreePtr|null){
     //we need to adjust the scroll position of the parent if the end of the node is
     //above the beggining of the client rect (i.e. we do that for nodes that are
     //above the visible area)
-    adjustScrollPosition(context.parentDom, context.parentClientRect, tree.element, tree.vElement)
+    //adjustScrollPosition(context.parentDom, context.parentClientRect, tree.element, tree.vElement)
     showReal(node)
 }
 
