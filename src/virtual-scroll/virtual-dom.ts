@@ -143,8 +143,14 @@ function adjustScrollPosition(scrollParent: HTMLElement, rect:ClientRect, newEle
     if ( !newElement || ! oldElement){
         return 
     }
+   
     const parentTop = rect.top
     const oldRect = oldElement.getBoundingClientRect()
+
+    if ( oldRect.top >= parentTop){
+        return // we only need to adjust the scroll if the element starts above the parent rect
+    }
+
     const newRect = newElement.getBoundingClientRect()
     const delta = newRect.bottom - oldRect.bottom
     scrollParent.scrollTop = scrollParent.scrollTop + delta

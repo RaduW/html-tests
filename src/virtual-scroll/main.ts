@@ -7,8 +7,8 @@ import { ShadowTree, toDom, addVirtualElements } from './front/shadow-tree';
 import { createScrollHandler } from './virtual-dom';
 
 export function main(){
-    const shadowTreeP = getShadowTree('')
-    //const shadowTreeP = getShadowTree('2015-11-04')
+    //const shadowTreeP = getShadowTree('')
+    const shadowTreeP = getShadowTree('2015-11-04')
     shadowTreeP.then( mountDoc)
 }
 
