@@ -6,14 +6,20 @@
 
  */
 
-import { ShadowTree, ShadowTreePtr, isVirtualNodeType, showReal } from "./front/shadow-tree";
+import * as R from 'ramda'
+import { ShadowTree, ShadowTreePtr, isVirtualNodeType, showReal, showVirtual } from "./front/shadow-tree";
 import { toTree, getChildren, toPointer, getNextPred, getPreviousPred } from "./front/shadow-tree-navigator";
+
+// interval of no scrolling after which a realized nodes cleanup is done
+const CleanupRealizedNodesInactivityTimeoutMs = 1000 
 
 interface VirtualDocContext {
     parentDom : HTMLElement
     parentClientRect: ClientRect // just caching
     realizedNodes: R.Dictionary<ShadowTreePtr>
+    lastRealizedNodes: R.Dictionary<ShadowTreePtr>
     currentTree?: ShadowTree
+    cleanupRealizedNodesHandler?: number 
 }
 
 export function createScrollHandler(parent: HTMLElement){
@@ -22,7 +28,8 @@ export function createScrollHandler(parent: HTMLElement){
     const context : VirtualDocContext = {
         parentDom: parent,
         parentClientRect: parentClientRect,
-        realizedNodes: {}
+        realizedNodes: {},
+        lastRealizedNodes: {},
     }
     
     return function ( root: ShadowTree) {
@@ -45,7 +52,12 @@ export function createScrollHandler(parent: HTMLElement){
 }
 
 function showVirtualElements( context: VirtualDocContext ){
-    //console.log('onScroll...', context.parentClientRect)
+
+    if ( context.cleanupRealizedNodesHandler){
+        //throtle the cleanup (only cleanup after )
+        window.clearTimeout(context.cleanupRealizedNodesHandler)
+    }
+    context.lastRealizedNodes = {} // keep only what we realize now
     const rootPtr = toPointer(context.currentTree!)
     const firstVelmPtr = findFirstVisibleVirtualElm(rootPtr, context.parentClientRect)
 
@@ -55,21 +67,26 @@ function showVirtualElements( context: VirtualDocContext ){
     }
 
     while ( current && !isTreeBelowClientRect(context, current)){
-        showReal(current)
-        //debugTreePtr(current)
+        realizeNode(context,current)
         if ( current){
 
         }
         current = getNextVirtualNode(current)
     }
 
-    //debugTreePtr(current)
-    showReal( current) // realize one hidden node below (if possible)
-
-    //showReal(firstVelmPtr)
+    realizeNode(context, current) // realize one hidden node below (if possible)
+    context.cleanupRealizedNodesHandler = window.setTimeout(()=>cleanupRealizedNodes(context), CleanupRealizedNodesInactivityTimeoutMs)
 }
 
+function cleanupRealizedNodes(context:VirtualDocContext){
 
+    for( const id of R.keys(context.realizedNodes)){
+        if ( !context.lastRealizedNodes[id]){
+            console.log('unrealizing id:', id)
+            unrealizeNode(context, id)
+        }
+    }
+}
 
 
 function debugTreePtr( treePtr: ShadowTreePtr | null ){
@@ -117,6 +134,15 @@ function isTreeVisible(context: VirtualDocContext, elmPtr: ShadowTreePtr|null): 
     return false
 }
 
+function unrealizeNode(context: VirtualDocContext, nodeId: string|number){
+    const node = context.realizedNodes[nodeId]
+    const tree = toTree(node)
+    if ( tree ){
+        showVirtual(node)
+        delete context.realizedNodes[nodeId]
+    }
+}
+
 function realizeNode(context: VirtualDocContext, node: ShadowTreePtr|null){
     if ( ! node){
         return 
@@ -126,16 +152,12 @@ function realizeNode(context: VirtualDocContext, node: ShadowTreePtr|null){
         return 
     }
 
+    context.realizedNodes[tree.id] = node
+    context.lastRealizedNodes[tree.id] = node
     if ( !tree.vElementActive){
         return
     }
 
-    //if we are here we need to switch the current node into the DOM
-    
-    //we need to adjust the scroll position of the parent if the end of the node is
-    //above the beggining of the client rect (i.e. we do that for nodes that are
-    //above the visible area)
-    //adjustScrollPosition(context.parentDom, context.parentClientRect, tree.element, tree.vElement)
     showReal(node)
 }
 
@@ -156,17 +178,21 @@ function adjustScrollPosition(scrollParent: HTMLElement, rect:ClientRect, newEle
     scrollParent.scrollTop = scrollParent.scrollTop + delta
 }
 
+
 function shouldSearchChildrenForVirtualNodes(tree: ShadowTree | null){
     return !!tree && !isVirtualNodeType(tree)
 }
+
 
 function getNextVirtualNode(current: ShadowTreePtr | null ): ShadowTreePtr|null {
     return getNextPred(current, isVirtualNodeType, shouldSearchChildrenForVirtualNodes)
 }
 
+
 function getPreviousVirtualNode(current: ShadowTreePtr | null ): ShadowTreePtr|null {
     return getPreviousPred(current, isVirtualNodeType, shouldSearchChildrenForVirtualNodes)
 }
+
 
 /**
  * Tests wheather a HTMLElment is visible in a (parent) client rect (that is if a part of the element
@@ -205,7 +231,6 @@ function isBelowHtml( elm: HTMLElement|null, rect: ClientRect):boolean{
 }
 
 
-
 function findFirstVisibleVirtualElm(root: ShadowTreePtr|null, pRect:ClientRect):ShadowTreePtr|null {
 
     const tree: ShadowTree|null = toTree(root)
@@ -220,12 +245,9 @@ function findFirstVisibleVirtualElm(root: ShadowTreePtr|null, pRect:ClientRect):
 
     const actualElm = elm! //if it is visible it must be real
 
-
-
     if (isVirtualNodeType(tree)){
         return root
     }
-    
 
     if ( tree.children){
         for (const childPtr of getChildren(root)){
