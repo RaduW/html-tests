@@ -55,7 +55,7 @@ function showVirtualElements( context: VirtualDocContext ){
     }
 
     while ( current && !isTreeBelowClientRect(context, current)){
-        realizeNode(context, current)
+        showReal(current)
         //debugTreePtr(current)
         if ( current){
 
@@ -64,7 +64,7 @@ function showVirtualElements( context: VirtualDocContext ){
     }
 
     //debugTreePtr(current)
-    realizeNode(context, current) // realize one hidden node below (if possible)
+    showReal( current) // realize one hidden node below (if possible)
 
     //showReal(firstVelmPtr)
 }
