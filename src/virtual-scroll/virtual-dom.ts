@@ -17,7 +17,7 @@ interface VirtualDocContext {
     parentDom : HTMLElement
     parentClientRect: ClientRect // just caching
     realizedNodes: R.Dictionary<ShadowTreePtr>
-    lastRealizedNodes: R.Dictionary<ShadowTreePtr>
+    //lastRealizedNodes: R.Dictionary<ShadowTreePtr>
     currentTree?: ShadowTree
     cleanupRealizedNodesHandler?: number 
 }
@@ -29,7 +29,7 @@ export function createScrollHandler(parent: HTMLElement){
         parentDom: parent,
         parentClientRect: parentClientRect,
         realizedNodes: {},
-        lastRealizedNodes: {},
+        //lastRealizedNodes: {},
     }
     
     return function ( root: ShadowTree) {
@@ -43,7 +43,7 @@ export function createScrollHandler(parent: HTMLElement){
         else {
             processing = true
             window.requestAnimationFrame( function(){
-                showVirtualElements(context)
+                handleScroll(context)
                 processing = false
     
             })
@@ -51,13 +51,9 @@ export function createScrollHandler(parent: HTMLElement){
     }
 }
 
-function showVirtualElements( context: VirtualDocContext ){
+function showVirtualElements(context:VirtualDocContext): R.Dictionary<ShadowTreePtr>{
+    const retVal: R.Dictionary<ShadowTreePtr> ={}
 
-    if ( context.cleanupRealizedNodesHandler){
-        //throtle the cleanup (only cleanup after )
-        window.clearTimeout(context.cleanupRealizedNodesHandler)
-    }
-    context.lastRealizedNodes = {} // keep only what we realize now
     const rootPtr = toPointer(context.currentTree!)
     const firstVelmPtr = findFirstVisibleVirtualElm(rootPtr, context.parentClientRect)
 
@@ -67,22 +63,42 @@ function showVirtualElements( context: VirtualDocContext ){
     }
 
     while ( current && !isTreeBelowClientRect(context, current)){
-        realizeNode(context,current)
-        if ( current){
+        const realized = realizeNode(context,current)
 
+        if ( realized){
+            retVal[realized[0]] = realized[1]
         }
         current = getNextVirtualNode(current)
     }
 
-    realizeNode(context, current) // realize one hidden node below (if possible)
+    const realized = realizeNode(context, current) // realize one hidden node below (if possible)
+    if ( realized){
+        retVal[realized[0]] = realized[1]
+    }
+    return retVal
+}
+
+
+function handleScroll( context: VirtualDocContext ){
+
+    if ( context.cleanupRealizedNodesHandler){
+        //throtle the cleanup (only cleanup after )
+        window.clearTimeout(context.cleanupRealizedNodesHandler)
+    }
+    
+    const realized = showVirtualElements(context)
+
+    context.realizedNodes = R.merge(context.realizedNodes, realized)
+
     context.cleanupRealizedNodesHandler = window.setTimeout(()=>cleanupRealizedNodes(context), CleanupRealizedNodesInactivityTimeoutMs)
 }
 
 function cleanupRealizedNodes(context:VirtualDocContext){
-
+    const realized = showVirtualElements(context)
+    console.log('about to clean up',R.keys(context.realizedNodes), R.keys(realized))
     for( const id of R.keys(context.realizedNodes)){
-        if ( !context.lastRealizedNodes[id]){
-            console.log('unrealizing id:', id)
+        if ( !realized[id]){
+            //console.log('unrealizing id:', id)
             unrealizeNode(context, id)
         }
     }
@@ -134,31 +150,33 @@ function isTreeVisible(context: VirtualDocContext, elmPtr: ShadowTreePtr|null): 
     return false
 }
 
-function unrealizeNode(context: VirtualDocContext, nodeId: string|number){
+function unrealizeNode(context: VirtualDocContext, nodeId: string|number):[string,ShadowTreePtr]|null{
     const node = context.realizedNodes[nodeId]
     const tree = toTree(node)
     if ( tree ){
         showVirtual(node)
         delete context.realizedNodes[nodeId]
     }
+    return tree ? [tree.id, node] : null
 }
 
-function realizeNode(context: VirtualDocContext, node: ShadowTreePtr|null){
+function realizeNode(context: VirtualDocContext, node: ShadowTreePtr|null):[string,ShadowTreePtr]|null{
     if ( ! node){
-        return 
+        return null
     }
     const tree = toTree(node)
     if ( ! tree){
-        return 
+        return null
     }
 
-    context.realizedNodes[tree.id] = node
-    context.lastRealizedNodes[tree.id] = node
+    //context.realizedNodes[tree.id] = node
+    //context.lastRealizedNodes[tree.id] = node
     if ( !tree.vElementActive){
-        return
+        return [tree.id, node]
     }
 
     showReal(node)
+    return [tree.id, node]
 }
 
 function adjustScrollPosition(scrollParent: HTMLElement, rect:ClientRect, newElement?:HTMLElement, oldElement?:HTMLElement){
