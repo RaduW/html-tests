@@ -37,9 +37,8 @@
     border-left: #fff5cc solid thin;
     padding-left: 0.5em;
 }
-.no- {
-    /*TODO RaduW put it back in after fixing v-art calculation*/
-    /*margin-bottom: 0.4em;*/
+.no- , .v-art{
+    margin-bottom: 0.4em;
     text-align: justify;
     box-sizing: border-box;
 }
@@ -51,12 +50,11 @@
     text-align: center;
 }
 
-.cap > .no-, .tit > .no-{
+.cap > .no-, .tit > .no-, .cap > .v-art, .tit > .v-art{
     font-weight: normal;
     text-align: justify;
     font-size: medium;
-    /*TODO RaduW put it back in after fixing v-art calculation*/
-    /*margin: 1em 0;*/
+    margin: 1em 0;
 }
 
 .na- {
