@@ -349,6 +349,8 @@ function switchVirtualElement ( treePtr:ShadowTreePtr|null, virtual: boolean){
         console.log( 'try to switch to virtual with missing virtual elm', tree)
         return 
       }
+      const elmRect = tree.element.getBoundingClientRect()
+      tree.vElement.style.height = elmRect.height+'px'
       parent.element.replaceChild(tree.vElement!, tree.element)
       tree.vElementActive = true
     }
