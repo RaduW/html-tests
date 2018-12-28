@@ -38,8 +38,10 @@
     padding-left: 0.5em;
 }
 .no- {
-    margin-bottom: 0.4em;
+    /*TODO RaduW put it back in after fixing v-art calculation*/
+    /*margin-bottom: 0.4em;*/
     text-align: justify;
+    box-sizing: border-box;
 }
 
 .cap.cap.cap, .tit.tit.tit {
@@ -53,7 +55,8 @@
     font-weight: normal;
     text-align: justify;
     font-size: medium;
-    margin: 1em 0;
+    /*TODO RaduW put it back in after fixing v-art calculation*/
+    /*margin: 1em 0;*/
 }
 
 .na- {
@@ -159,8 +162,10 @@
 
 .v-art {
     height: 30em;
+    /*margin-bottom: 0.4em;*/
     /* width: 59em; */
     /*margin: 0.5em;*/
+    box-sizing: border-box;
     background-color: #ffaaaa;
 }
 
